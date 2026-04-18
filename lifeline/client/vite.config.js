@@ -5,8 +5,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': { target: 'https://your-codespace-5000-url.preview.app.github.dev', changeOrigin: true },
-      '/socket.io': { target: 'http://localhost:5000', ws: true }
+      '/api': {
+        target: 'https://lifeline-production-4df8.up.railway.app',
+        changeOrigin: true
+      }
     }
   }
 })
