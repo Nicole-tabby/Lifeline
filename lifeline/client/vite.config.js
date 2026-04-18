@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/api': { target: 'http://localhost:5000', changeOrigin: true },
+      '/api': { target: 'https://your-codespace-5000-url.preview.app.github.dev', changeOrigin: true },
       '/socket.io': { target: 'http://localhost:5000', ws: true }
     }
   }
