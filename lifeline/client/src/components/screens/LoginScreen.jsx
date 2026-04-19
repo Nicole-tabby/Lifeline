@@ -28,46 +28,50 @@ export default function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-surface flex flex-col items-center justify-center px-6">
-      {/* Logo */}
-      <div className="text-center mb-10">
-        <div className="w-16 h-16 rounded-full bg-brand-muted border border-brand/30 flex items-center justify-center mx-auto mb-4 text-3xl">♡</div>
-        <h1 className="font-serif text-4xl text-white">Life<span className="text-brand">line</span></h1>
-        <p className="text-sm text-gray-500 mt-2 tracking-widest uppercase text-xs">One tap from okay</p>
-      </div>
+    <div style={{ minHeight: '100dvh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
+      <div style={{ width: '100%', maxWidth: '400px' }}>
 
-      {/* Mode toggle */}
-      <div className="flex w-full max-w-xs bg-surface-card border border-surface-border rounded-2xl p-1 mb-6">
-        {['login', 'register'].map(m => (
-          <button key={m} onClick={() => setMode(m)}
-            className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors capitalize ${mode === m ? 'bg-brand text-white' : 'text-gray-500'}`}>
-            {m === 'login' ? 'Sign in' : 'Sign up'}
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--brand-muted)', border: '1px solid var(--brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: 28 }}>♡</div>
+          <h1 className="font-serif" style={{ fontSize: '2.5rem', color: 'var(--text-primary)' }}>
+            Life<span style={{ color: 'var(--brand)' }}>line</span>
+          </h1>
+          <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 4 }}>One tap from okay</p>
+        </div>
+
+        {/* Toggle */}
+        <div style={{ display: 'flex', background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)', borderRadius: '1rem', padding: 4, marginBottom: '1.5rem' }}>
+          {['login', 'register'].map(m => (
+            <button key={m} onClick={() => setMode(m)} style={{
+              flex: 1, padding: '0.5rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500, fontFamily: 'DM Sans, sans-serif', transition: 'all 0.15s',
+              background: mode === m ? 'var(--brand)' : 'transparent',
+              color: mode === m ? 'white' : 'var(--text-secondary)',
+            }}>
+              {m === 'login' ? 'Sign in' : 'Sign up'}
+            </button>
+          ))}
+        </div>
+
+        {/* Form */}
+        <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {mode === 'register' && (
+            <input value={form.name} onChange={set('name')} placeholder="Your name" className="input-field" required />
+          )}
+          <input value={form.email} onChange={set('email')} placeholder="University email" type="email" className="input-field" required />
+          <input value={form.password} onChange={set('password')} placeholder="Password" type="password" className="input-field" required />
+
+          {error && <p style={{ fontSize: '0.75rem', color: '#f87171', textAlign: 'center' }}>{error}</p>}
+
+          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '0.5rem', opacity: loading ? 0.6 : 1 }}>
+            {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
           </button>
-        ))}
+        </form>
+
+        <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '2rem', lineHeight: 1.6 }}>
+          Lifeline is anonymous by default. We never share your data with your institution, peers, or anyone else without your explicit consent.
+        </p>
       </div>
-
-      {/* Form */}
-      <form onSubmit={submit} className="w-full max-w-xs space-y-3">
-        {mode === 'register' && (
-          <input value={form.name} onChange={set('name')} placeholder="Your name"
-            className="w-full bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-gray-200 placeholder:text-gray-600 outline-none focus:border-brand/50 transition-colors" required />
-        )}
-        <input value={form.email} onChange={set('email')} placeholder="University email" type="email"
-          className="w-full bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-gray-200 placeholder:text-gray-600 outline-none focus:border-brand/50 transition-colors" required />
-        <input value={form.password} onChange={set('password')} placeholder="Password" type="password"
-          className="w-full bg-surface-card border border-surface-border rounded-2xl px-4 py-3 text-sm text-gray-200 placeholder:text-gray-600 outline-none focus:border-brand/50 transition-colors" required />
-
-        {error && <p className="text-xs text-red-400 text-center">{error}</p>}
-
-        <button type="submit" disabled={loading}
-          className="btn-primary disabled:opacity-50">
-          {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
-        </button>
-      </form>
-
-      <p className="text-[10px] text-gray-600 text-center mt-8 max-w-xs leading-relaxed">
-        Lifeline is anonymous by default. We never share your data with your institution, peers, or anyone else without your explicit consent.
-      </p>
     </div>
   )
 }
