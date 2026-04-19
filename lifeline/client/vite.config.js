@@ -6,9 +6,12 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://lifeline-production-4df8.up.railway.app',
+        target: 'http://localhost:5000',
         changeOrigin: true
       }
     }
+  },
+  define: {
+    'process.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL)
   }
 })
