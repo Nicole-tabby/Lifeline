@@ -40,7 +40,6 @@ export default function LoginScreen() {
 
   return (
     <div style={{ minHeight: '100dvh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
-<<<<<<< HEAD
       <div style={{ width: '100%', maxWidth: 420 }}>
 
         {/* Logo */}
@@ -62,33 +61,10 @@ export default function LoginScreen() {
               color: mode === m ? 'white' : 'var(--text-secondary)',
             }}>
               {label}
-=======
-      <div style={{ width: '100%', maxWidth: '400px' }}>
-
-        {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--brand-muted)', border: '1px solid var(--brand)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', fontSize: 28 }}>♡</div>
-          <h1 className="font-serif" style={{ fontSize: '2.5rem', color: 'var(--text-primary)' }}>
-            Life<span style={{ color: 'var(--brand)' }}>line</span>
-          </h1>
-          <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', letterSpacing: '0.15em', textTransform: 'uppercase', marginTop: 4 }}>One tap from okay</p>
-        </div>
-
-        {/* Toggle */}
-        <div style={{ display: 'flex', background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)', borderRadius: '1rem', padding: 4, marginBottom: '1.5rem' }}>
-          {['login', 'register'].map(m => (
-            <button key={m} onClick={() => setMode(m)} style={{
-              flex: 1, padding: '0.5rem', borderRadius: '0.75rem', border: 'none', cursor: 'pointer', fontSize: '0.875rem', fontWeight: 500, fontFamily: 'DM Sans, sans-serif', transition: 'all 0.15s',
-              background: mode === m ? 'var(--brand)' : 'transparent',
-              color: mode === m ? 'white' : 'var(--text-secondary)',
-            }}>
-              {m === 'login' ? 'Sign in' : 'Sign up'}
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
             </button>
           ))}
         </div>
 
-<<<<<<< HEAD
         {/* Role selector (signup only) */}
         {mode === 'register' && (
           <div style={{ marginBottom: '1rem' }}>
@@ -127,24 +103,10 @@ export default function LoginScreen() {
             borderRadius: 14, fontSize: '0.9rem', fontWeight: 500, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif',
             opacity: loading ? 0.6 : 1, marginTop: 4, transition: 'opacity 0.15s'
           }}>
-=======
-        {/* Form */}
-        <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {mode === 'register' && (
-            <input value={form.name} onChange={set('name')} placeholder="Your name" className="input-field" required />
-          )}
-          <input value={form.email} onChange={set('email')} placeholder="University email" type="email" className="input-field" required />
-          <input value={form.password} onChange={set('password')} placeholder="Password" type="password" className="input-field" required />
-
-          {error && <p style={{ fontSize: '0.75rem', color: '#f87171', textAlign: 'center' }}>{error}</p>}
-
-          <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '0.5rem', opacity: loading ? 0.6 : 1 }}>
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
             {loading ? 'Please wait...' : mode === 'login' ? 'Sign in' : 'Create account'}
           </button>
         </form>
 
-<<<<<<< HEAD
         {/* Parent hint */}
         {mode === 'register' && role === 'parent' && (
           <div style={{ marginTop: '1rem', padding: '0.75rem 1rem', background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)', borderRadius: 12 }}>
@@ -156,10 +118,6 @@ export default function LoginScreen() {
 
         <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '1.5rem', lineHeight: 1.7 }}>
           Lifeline is anonymous by default. We never share your data with institutions or third parties without your explicit consent.
-=======
-        <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textAlign: 'center', marginTop: '2rem', lineHeight: 1.6 }}>
-          Lifeline is anonymous by default. We never share your data with your institution, peers, or anyone else without your explicit consent.
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
         </p>
       </div>
     </div>

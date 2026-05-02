@@ -1,7 +1,6 @@
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
-<<<<<<< HEAD
   // Core
   name:     { type: String, required: true, trim: true },
   email:    { type: String, required: true, unique: true, lowercase: true, trim: true },
@@ -27,15 +26,6 @@ const userSchema = new mongoose.Schema({
   isPeerSupporter: { type: Boolean, default: false },
   peerProfile: {
     specialties:  [String],   // ['anxiety', 'academic', 'loneliness']
-=======
-  name:      { type: String, required: true, trim: true },
-  email:     { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password:  { type: String, required: true },
-  university:{ type: String, default: '' },
-  isPeerSupporter: { type: Boolean, default: false },
-  peerProfile: {
-    specialties:  [String],
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
     bio:          String,
     available:    { type: Boolean, default: false },
     rating:       { type: Number, default: 0 },
@@ -46,7 +36,6 @@ const userSchema = new mongoose.Schema({
     yearOfStudy: String,
     timezone:   String,
   },
-<<<<<<< HEAD
 
   // Student identity (for matching)
   identity: {
@@ -57,8 +46,6 @@ const userSchema = new mongoose.Schema({
   },
 
   // Trusted circle
-=======
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
   circle:      [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   silentWatch: { type: Boolean, default: true },
   lastCheckin: { type: Date },

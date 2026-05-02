@@ -35,10 +35,7 @@ app.use(cors({ origin: '*', credentials: false }))
 app.use(express.json())
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }))
 
-<<<<<<< HEAD
 // Public
-=======
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
 app.use('/api/auth', authRoutes)
 app.use('/api/resources', resourceRoutes)
 
@@ -56,11 +53,7 @@ setupSocketHandlers(io)
 const PORT = process.env.PORT || 5000
 const MONGO_URI = process.env.MONGO_URL || process.env.MONGODB_URI || 'mongodb://localhost:27017/lifeline'
 
-<<<<<<< HEAD
 httpServer.listen(PORT, () => console.log(`🚀 Lifeline v2 server on port ${PORT}`))
-=======
-httpServer.listen(PORT, () => console.log(`🚀 Lifeline server on port ${PORT}`))
->>>>>>> 4c50bfe79723333d9f25a17c5b058dc30ff0e4bc
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))

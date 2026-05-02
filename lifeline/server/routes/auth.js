@@ -42,10 +42,13 @@ router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body
     console.log('Login attempt:', email)
+
     const user = await User.findOne({ email })
     if (!user) return res.status(401).json({ message: 'Invalid email or password' })
+
     const match = await bcrypt.compare(password, user.password)
     if (!match) return res.status(401).json({ message: 'Invalid email or password' })
+
     user.lastCheckin = new Date()
     await user.save()
 
