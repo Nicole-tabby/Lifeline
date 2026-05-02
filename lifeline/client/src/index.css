@@ -3,34 +3,109 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-surface text-gray-100 font-sans;
-    -webkit-font-smoothing: antialiased;
+  :root {
+    --bg: #ffffff;
+    --bg-card: #f8f8f8;
+    --bg-border: #e5e7eb;
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --brand: #f87171;
+    --brand-muted: #fef2f2;
+    --surface: #ffffff;
   }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0D1117;
+      --bg-card: #131920;
+      --bg-border: #1E2229;
+      --text-primary: #F9FAFB;
+      --text-secondary: #6B7280;
+      --brand: #f87171;
+      --brand-muted: #1C1117;
+      --surface: #0D1117;
+    }
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-family: 'DM Sans', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.2s, color 0.2s;
+  }
+
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { @apply bg-surface-border rounded-full; }
+  ::-webkit-scrollbar-thumb { background: var(--bg-border); border-radius: 9999px; }
 }
 
 @layer components {
   .card {
-    @apply bg-surface-card border border-surface-border rounded-2xl p-4;
+    background: var(--bg-card);
+    border: 0.5px solid var(--bg-border);
+    border-radius: 1rem;
+    padding: 1rem 1.25rem;
   }
   .btn-primary {
-    @apply w-full py-3.5 bg-brand text-white font-medium rounded-2xl
-           transition-opacity hover:opacity-90 active:scale-[0.98] text-sm;
+    width: 100%;
+    padding: 0.875rem;
+    background: var(--brand);
+    color: white;
+    font-weight: 500;
+    border-radius: 1rem;
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: opacity 0.15s, transform 0.1s;
   }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
   .btn-outline {
-    @apply w-full py-3 border border-brand text-brand font-medium rounded-2xl
-           transition-colors hover:bg-brand-muted text-sm;
+    width: 100%;
+    padding: 0.75rem;
+    background: transparent;
+    border: 0.5px solid var(--brand);
+    color: var(--brand);
+    font-weight: 500;
+    border-radius: 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: background 0.15s;
   }
+  .btn-outline:hover { background: var(--brand-muted); }
   .tag {
-    @apply inline-block text-[10px] px-2 py-0.5 rounded-full border;
+    display: inline-block;
+    font-size: 0.625rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 9999px;
+    border: 0.5px solid;
   }
   .screen-header {
-    @apply px-5 pt-3 pb-3 border-b border-surface-border;
+    padding: 0.75rem 1.25rem 0.75rem;
+    border-bottom: 0.5px solid var(--bg-border);
   }
   .section-label {
-    @apply text-[10px] font-medium text-gray-500 uppercase tracking-widest mb-2 mt-4;
+    font-size: 0.625rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 1rem 0 0.5rem;
+    display: block;
   }
+  .input-field {
+    width: 100%;
+    background: var(--bg-card);
+    border: 0.5px solid var(--bg-border);
+    border-radius: 1rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input-field:focus { border-color: var(--brand); }
+  .input-field::placeholder { color: var(--text-secondary); }
 }
