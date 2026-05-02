@@ -1,24 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
-import { Send, Mic, PhoneCall } from 'lucide-react'
+import { Send, Mic, PhoneCall, Users } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import api from '../../lib/api'
-
-const SYSTEM = `You are Lifeline's AI First Responder — a calm, warm, non-judgmental companion for students who are struggling.
-
-Your role:
-- Listen actively and validate feelings before anything else
-- Never minimise, dismiss, or immediately problem-solve
-- Use short, conversational messages (2-3 sentences max)
-- Detect crisis signals (suicidal ideation, self-harm language) → immediately surface the campus crisis line and iCall (9152987821)
-- After 3-4 exchanges, gently offer to connect with a peer supporter or campus resource
-- Always end with a question that invites them to keep talking
-
-You are NOT a therapist. You are a warm first point of contact.`
 
 const QUICK_REPLIES = [
   "I'm feeling overwhelmed",
-  "Can't sleep from anxiety",
-  "Feeling really lonely",
-  "Academic pressure is too much",
+  "I can't sleep from anxiety",
+  "I'm really lonely",
+  "Academic pressure is crushing me",
 ]
 
 export default function AIChatScreen() {
@@ -27,14 +16,23 @@ export default function AIChatScreen() {
   ])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [isCrisis, setIsCrisis] = useState(false)
+  const [exchangeCount, setExchangeCount] = useState(0)
+  const [showHandoff, setShowHandoff] = useState(false)
   const bottomRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // Show warm handoff offer after 3 exchanges
+  useEffect(() => {
+    if (exchangeCount >= 3 && !showHandoff) setShowHandoff(true)
+  }, [exchangeCount])
+
   const send = async (text) => {
-    const userMsg = text || input.trim()
+    const userMsg = (text || input).trim()
     if (!userMsg || loading) return
     setInput('')
 
@@ -44,14 +42,15 @@ export default function AIChatScreen() {
 
     try {
       const { data } = await api.post('/chat/message', {
-        messages: updated.map(m => ({ role: m.role, content: m.content })),
-        system: SYSTEM
+        messages: updated.map(m => ({ role: m.role, content: m.content }))
       })
       setMessages(prev => [...prev, { role: 'assistant', content: data.reply }])
+      if (data.isCrisis) setIsCrisis(true)
+      setExchangeCount(c => c + 1)
     } catch {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: "I'm having a little trouble right now. If this is urgent, please call iCall at 9152987821 — they're available 24/7."
+        content: "I'm having a little trouble right now. If this is urgent, please call iCall at 9152987821 — they're available 24/7. 🧡"
       }])
     } finally {
       setLoading(false)
@@ -59,97 +58,147 @@ export default function AIChatScreen() {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', maxHeight: 780 }}>
+
       {/* Header */}
-      <div className="screen-header shrink-0">
-        <h2 className="font-serif text-xl text-white">
-          AI <span className="text-brand">First Responder</span>
+      <div style={{ padding: '0.75rem 1.25rem 0.75rem', borderBottom: '0.5px solid var(--bg-border)', flexShrink: 0 }}>
+        <h2 className="font-serif" style={{ fontSize: '1.4rem', color: 'var(--text-primary)' }}>
+          AI <span style={{ color: 'var(--brand)' }}>First Responder</span>
         </h2>
-        <p className="text-[11px] text-gray-500 mt-0.5">Calm · Confidential · Non-judgmental</p>
+        <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: 2 }}>Calm · Confidential · 2-minute bridge to real support</p>
       </div>
 
       {/* Crisis banner */}
-      <div className="mx-4 mt-3 shrink-0">
-        <button
-          onClick={() => window.open('tel:9152987821')}
-          className="w-full flex items-center gap-2 bg-red-950/40 border border-red-800/40 rounded-xl px-3 py-2 text-left"
-        >
-          <PhoneCall size={14} className="text-red-400 shrink-0" />
-          <span className="text-[11px] text-red-400">Crisis? Call iCall now: 9152987821</span>
-        </button>
-      </div>
+      {isCrisis && (
+        <div style={{ margin: '0.75rem 1.25rem 0', flexShrink: 0 }}>
+          <button onClick={() => window.open('tel:9152987821')} style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(248,113,113,0.08)', border: '0.5px solid rgba(248,113,113,0.4)',
+            borderRadius: 12, padding: '0.75rem 1rem', cursor: 'pointer', textAlign: 'left'
+          }}>
+            <PhoneCall size={15} style={{ color: 'var(--brand)', flexShrink: 0 }} />
+            <div>
+              <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--brand)' }}>You're not alone right now</p>
+              <p style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>Tap to call iCall now: 9152987821 · Free · Confidential</p>
+            </div>
+          </button>
+        </div>
+      )}
+
+      {/* Normal crisis line */}
+      {!isCrisis && (
+        <div style={{ margin: '0.75rem 1.25rem 0', flexShrink: 0 }}>
+          <button onClick={() => window.open('tel:9152987821')} style={{
+            width: '100%', display: 'flex', alignItems: 'center', gap: 8, background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)',
+            borderRadius: 10, padding: '0.5rem 0.875rem', cursor: 'pointer'
+          }}>
+            <PhoneCall size={12} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+            <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)' }}>Crisis? Call iCall now: 9152987821</span>
+          </button>
+        </div>
+      )}
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3">
+      <div style={{ flex: 1, overflowY: 'auto', padding: '1rem 1.25rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {/* Quick replies — only show before first user message */}
         {messages.length === 1 && (
-          <div className="grid grid-cols-2 gap-2 mb-2">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 4 }}>
             {QUICK_REPLIES.map(q => (
-              <button
-                key={q}
-                onClick={() => send(q)}
-                className="text-left text-[11px] text-gray-400 bg-surface-card border border-surface-border rounded-xl px-3 py-2.5 hover:border-brand/40 transition-colors"
-              >
-                {q}
-              </button>
+              <button key={q} onClick={() => send(q)} style={{
+                textAlign: 'left', fontSize: '0.72rem', color: 'var(--text-secondary)', background: 'var(--bg-card)',
+                border: '0.5px solid var(--bg-border)', borderRadius: 12, padding: '0.65rem 0.75rem', cursor: 'pointer',
+                fontFamily: 'DM Sans, sans-serif', lineHeight: 1.4, transition: 'border-color 0.15s'
+              }}>{q}</button>
             ))}
           </div>
         )}
 
         {messages.map((m, i) => (
-          <div
-            key={i}
-            className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`max-w-[80%] px-3.5 py-2.5 rounded-2xl text-[12px] leading-relaxed ${
-                m.role === 'user'
-                  ? 'bg-brand text-white rounded-br-sm'
-                  : 'bg-surface-card border border-surface-border text-gray-300 rounded-bl-sm'
-              }`}
-            >
+          <div key={i} style={{ display: 'flex', justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start' }}>
+            <div style={{
+              maxWidth: '80%', padding: '0.65rem 0.875rem', borderRadius: 16, fontSize: '0.8rem', lineHeight: 1.6,
+              background: m.role === 'user' ? 'var(--brand)' : 'var(--bg-card)',
+              color: m.role === 'user' ? 'white' : 'var(--text-primary)',
+              border: m.role === 'user' ? 'none' : '0.5px solid var(--bg-border)',
+              borderBottomRightRadius: m.role === 'user' ? 4 : 16,
+              borderBottomLeftRadius: m.role === 'assistant' ? 4 : 16,
+            }}>
               {m.content}
             </div>
           </div>
         ))}
 
+        {/* Typing indicator */}
         {loading && (
-          <div className="flex justify-start">
-            <div className="bg-surface-card border border-surface-border px-4 py-3 rounded-2xl rounded-bl-sm">
-              <div className="flex gap-1">
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)', padding: '0.65rem 0.875rem', borderRadius: 16, borderBottomLeftRadius: 4 }}>
+              <div style={{ display: 'flex', gap: 4 }}>
                 {[0, 1, 2].map(i => (
-                  <div
-                    key={i}
-                    className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce"
-                    style={{ animationDelay: `${i * 0.15}s` }}
-                  />
+                  <div key={i} style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--text-secondary)', animation: 'bounce 1s infinite', animationDelay: `${i * 0.15}s` }} />
                 ))}
               </div>
             </div>
           </div>
         )}
+
+        {/* Warm handoff offer */}
+        {showHandoff && !isCrisis && (
+          <div style={{ background: 'var(--bg-card)', border: '0.5px solid rgba(248,113,113,0.3)', borderRadius: 14, padding: '0.875rem 1rem', margin: '0.5rem 0' }}>
+            <p style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>Ready to connect you with a real person</p>
+            <p style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: 10 }}>
+              A vetted peer supporter is trained to help with exactly this. Anonymous, 24-hour session, no record kept.
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={() => navigate('/peer')} style={{
+                flex: 1, padding: '0.6rem', background: 'var(--brand)', color: 'white', border: 'none',
+                borderRadius: 10, fontSize: '0.75rem', fontWeight: 500, cursor: 'pointer', fontFamily: 'DM Sans, sans-serif', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6
+              }}>
+                <Users size={13} /> Find a peer supporter
+              </button>
+              <button onClick={() => setShowHandoff(false)} style={{
+                flex: 1, padding: '0.6rem', background: 'var(--bg)', border: '0.5px solid var(--bg-border)',
+                borderRadius: 10, fontSize: '0.75rem', cursor: 'pointer', color: 'var(--text-secondary)', fontFamily: 'DM Sans, sans-serif'
+              }}>
+                Keep talking here
+              </button>
+            </div>
+          </div>
+        )}
+
         <div ref={bottomRef} />
       </div>
 
       {/* Input */}
-      <div className="shrink-0 border-t border-surface-border px-4 py-3 flex gap-2">
+      <div style={{ flexShrink: 0, borderTop: '0.5px solid var(--bg-border)', padding: '0.75rem 1.25rem', display: 'flex', gap: 8 }}>
         <input
           value={input}
           onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && send()}
+          onKeyDown={e => e.key === 'Enter' && !e.shiftKey && send()}
           placeholder="Type or speak..."
-          className="flex-1 bg-surface-card border border-surface-border rounded-full px-4 py-2 text-sm text-gray-200 placeholder:text-gray-600 outline-none focus:border-brand/50"
+          style={{
+            flex: 1, background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)', borderRadius: 24,
+            padding: '0.6rem 1rem', fontSize: '0.875rem', color: 'var(--text-primary)', fontFamily: 'DM Sans, sans-serif', outline: 'none'
+          }}
         />
-        <button className="w-9 h-9 rounded-full bg-surface-card border border-surface-border flex items-center justify-center text-gray-500 hover:text-gray-300 transition-colors">
+        <button style={{
+          width: 38, height: 38, borderRadius: '50%', background: 'var(--bg-card)', border: '0.5px solid var(--bg-border)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-secondary)'
+        }}>
           <Mic size={15} />
         </button>
-        <button
-          onClick={() => send()}
-          disabled={!input.trim() || loading}
-          className="w-9 h-9 rounded-full bg-brand flex items-center justify-center disabled:opacity-40 transition-opacity"
-        >
-          <Send size={14} className="text-white" />
+        <button onClick={() => send()} disabled={!input.trim() || loading} style={{
+          width: 38, height: 38, borderRadius: '50%', background: 'var(--brand)', border: 'none',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: (!input.trim() || loading) ? 0.4 : 1, transition: 'opacity 0.15s'
+        }}>
+          <Send size={14} style={{ color: 'white' }} />
         </button>
       </div>
+
+      <style>{`
+        @keyframes bounce {
+          0%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-6px); }
+        }
+      `}</style>
     </div>
   )
 }

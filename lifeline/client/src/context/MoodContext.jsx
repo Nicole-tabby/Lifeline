@@ -16,10 +16,14 @@ export function MoodProvider({ children }) {
   }, [])
 
   const fetchHistory = useCallback(async () => {
-    const { data } = await api.get('/mood/history')
-    setHistory(data.entries)
-    setStreak(data.streak)
-    setTodayMood(data.today || null)
+    try {
+      const { data } = await api.get('/mood/history')
+      setHistory(data.entries)
+      setStreak(data.streak)
+      setTodayMood(data.today || null)
+    } catch (err) {
+      console.error('Mood fetch error:', err.message)
+    }
   }, [])
 
   return (

@@ -9,6 +9,7 @@ import PeerScreen from './components/screens/PeerScreen'
 import ResourcesScreen from './components/screens/ResourcesScreen'
 import AIChatScreen from './components/screens/AIChatScreen'
 import CircleScreen from './components/screens/CircleScreen'
+import ParentDashboard from './components/screens/ParentDashboard'
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
             <Route path="resources" element={<ResourcesScreen />} />
             <Route path="chat" element={<AIChatScreen />} />
             <Route path="circle" element={<CircleScreen />} />
+            <Route path="parent" element={<ParentDashboard />} />
           </Route>
         </Routes>
       </MoodProvider>

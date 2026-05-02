@@ -26,11 +26,7 @@ export function setupSocketHandlers(io) {
 
     socket.on('send-message', ({ roomId, message }) => {
       if (!message?.trim()) return
-      const payload = {
-        senderId: socket.user.id,
-        message: message.trim(),
-        timestamp: new Date().toISOString()
-      }
+      const payload = { senderId: socket.user.id, message: message.trim(), timestamp: new Date().toISOString() }
       socket.to(roomId).emit('receive-message', payload)
       socket.emit('message-sent', payload)
     })
